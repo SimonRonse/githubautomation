@@ -1,0 +1,42 @@
+:root {
+  --bg: #f6f8fa;
+  --bg-elev: #ffffff;
+  --text: #24292f;
+  --muted: #57606a;
+  --border: #d0d7de;
+  --focus: #0969da;
+  --danger: #cf222e;
+
+  --btn-bg: #1f2328;
+  --btn-text: #ffffff;
+  --gh-bg: #24292f;
+  --gh-text: #ffffff;
+
+  --radius: 12px;
+  --shadow: 0 1px 0 rgba(31,35,40,.04), 0 8px 24px rgba(66,74,83,.12);
+  --header-h: 56px;
+  --content-max: 1200px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --bg-elev: #161b22;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --border: #30363d;
+    --btn-bg: #1f6feb;
+    --btn-text: #ffffff;
+    --shadow: 0 0 0 rgba(0,0,0,0);
+  }
+}

@@ -1,0 +1,20 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .02s ease-in-out, filter .15s ease-in-out, background-color .15s;
+}
+.btn:hover { filter: brightness(1.03); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn--block { width: 100%; }
+.btn--ghost { background: var(--bg-elev); color: var(--text); }
+.btn--github { background: var(--gh-bg); color: var(--gh-text); border-color: #00000040; }

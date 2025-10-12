@@ -1,0 +1,35 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header__inner {
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+.app-header__brand { display: flex; align-items: center; gap: 12px; }
+.app-header__title { font-weight: 700; }
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh; // full viewport height
+  background: var(--bg);
+}
+
+.page-main {
+  flex: 1; // take up all remaining space between header/footer
+  display: flex; // centers children like login-page
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; // prevents scrollbars
+}

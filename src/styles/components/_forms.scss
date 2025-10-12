@@ -1,0 +1,20 @@
+.form__title { margin: 0 0 var(--space-6); font-size: 1.5rem; font-weight: 700; }
+.form__group { display: grid; gap: 6px; margin-bottom: var(--space-4); }
+label { color: var(--text); font-weight: 600; }
+
+.input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  outline: none;
+}
+.input::placeholder { color: color-mix(in oklab, var(--muted), transparent 20%); }
+.input:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--focus), transparent 80%);
+}
+
+.helper { color: var(--muted); font-size: .9rem; }

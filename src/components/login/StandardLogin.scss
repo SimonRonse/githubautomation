@@ -1,0 +1,16 @@
+.std-login {
+  display: grid;
+  align-content: start;
+}
+
+.std-login__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.std-login__actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}

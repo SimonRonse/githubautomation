@@ -1,0 +1,49 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+  }
+
+  &__section {
+    width: 100%;
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  @media (min-width: 900px) {
+    &__card {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 2rem;
+      max-width: 900px;
+      padding: 3rem;
+    }
+
+    &__divider {
+      width: 1px;
+      height: auto;
+      background: var(--border);
+      margin: 0;
+    }
+  }
+}

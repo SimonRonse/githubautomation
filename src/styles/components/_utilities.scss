@@ -1,0 +1,17 @@
+.page-container { width: 100%; max-width: var(--content-max); margin: 0 auto; }
+.container--center {
+  min-height: calc(100vh - var(--header-h));
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.stack { display: grid; gap: var(--space-4); }
+.stack--sm { gap: var(--space-2); }
+.stack--lg { gap: var(--space-6); }
+
+.u-mt-0 { margin-top: 0 !important; }
+.u-mb-16 { margin-bottom: 16px !important; }
+.u-mt-24 { margin-top: 24px !important; }
+
+.divider { height: 1px; width: 100%; background: var(--border); margin: var(--space-6) 0; }
