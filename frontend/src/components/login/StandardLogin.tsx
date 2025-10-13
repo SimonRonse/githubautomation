@@ -2,9 +2,13 @@ import { useState } from "react";
 import "./StandardLogin.scss";
 
 export type StandardLoginValues = { username: string; password: string };
-type Props = { onSubmit?: (values: StandardLoginValues) => void; loading?: boolean };
+type Props = { onSubmit?:
+        (values:
+             StandardLoginValues) => void;
+             loading?: boolean
+             errorMsg?: string | null; };
 
-export default function StandardLogin({ onSubmit, loading }: Props) {
+export default function StandardLogin({ onSubmit, loading, errorMsg }: Props) {
     const [values, setValues] = useState<StandardLoginValues>({ username: "", password: "" });
     const canSubmit = values.username.trim() && values.password.trim();
 
@@ -51,6 +55,16 @@ export default function StandardLogin({ onSubmit, loading }: Props) {
                     required
                 />
             </div>
+
+            {errorMsg ? (
+                <p
+                    className="helper"
+                    role="alert"
+                    style={{ color: "var(--danger)", marginTop: "0.5rem" }}
+                >
+                    {errorMsg}
+                </p>
+            ) : null}
 
             <div className="std-login__actions">
                 <button className="btn btn--block" type="submit" disabled={!canSubmit || !!loading}>
