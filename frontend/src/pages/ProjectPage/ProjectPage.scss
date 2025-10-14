@@ -1,0 +1,205 @@
+.project-page {
+  padding: var(--space-8);
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--space-8);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+
+  /* use literal breakpoints (var() doesn't work in media queries) */
+  @media (min-width: 768px) {
+    padding: 48px; /* ~1.5 × space-8 */
+    gap: 48px;
+  }
+
+  &__header {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-6);
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: var(--space-2);
+      color: var(--text);
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+}
+
+/* center blocks and prevent “tiny column” look */
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.org-box {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow);
+  width: 100%;
+
+  @media (min-width: 768px) {
+    padding: 36px;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+
+    h2 { font-size: 1.4rem; font-weight: 600; }
+
+    .btn {
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      border-radius: calc(var(--radius) / 2);
+      padding: var(--space-2) var(--space-4);
+      cursor: pointer;
+      transition: background 0.15s ease-in-out;
+
+      &:hover { background: var(--focus); }
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+}
+
+.project-stats {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: 1fr;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__tile {
+    padding: var(--space-6);
+    border-radius: calc(var(--radius) / 2);
+    background: var(--bg-elev);
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease;
+
+    &:hover { transform: translateY(-3px); }
+
+    h3 { font-size: 1.5rem; margin-bottom: var(--space-2); }
+    p  { color: var(--muted); font-size: 0.95rem; }
+  }
+}
+
+.group-settings {
+  width: 100%;
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}
+
+.url-listbox__select {
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: calc(var(--radius) / 2);
+  border: 1px solid var(--border);
+  background-color: var(--bg-elev);
+  color: var(--text);
+  font-size: 1rem;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease;
+
+  &:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(9,105,218,0.2);
+  }
+}
+
+/* floating + button bottom-right */
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  line-height: 0;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+
+  &:hover { background: var(--focus); transform: translateY(-2px); }
+}
+
+.invite-url__field .form__group {
+   flex: 1;
+   width: 100%;
+ }
+
+.invite-url {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+
+  &__field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+
+    input {
+      flex: 1;
+      width: 95%;
+    }
+  }
+
+  &__copy-btn {
+    position: absolute;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: var(--muted);
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--focus);
+    }
+  }
+
+  .helper {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+}

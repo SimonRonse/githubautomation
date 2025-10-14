@@ -30,23 +30,16 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function me(req: Request, res: Response) {
-    const auth = req.headers.authorization?.split(" ")[1];
-    if (!auth) return res.status(401).json({ error: "NO_TOKEN" });
-    try {
-        const payload = verifyJwt(auth);
-        const user = findById(payload.sub);
-        console.log("user found in me():", user, "with payload:", payload);
-        if (!user) return res.status(401).json({ error: "INVALID_TOKEN" });
-        res.json({ "user" :
-            {
-                id: user.id,
-                username: user.username,
-                email: user.email
-            }
-        });
-    } catch {
-        res.status(401).json({ error: "INVALID_TOKEN" });
-    }
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "NOT_AUTHENTICATED" });
+
+    res.json({
+        user: {
+            id: user.id,
+            username: user.standardName ?? user.username,
+            email: user.email,
+        },
+    });
 }
 
 export function githubLogin(_req: Request, res: Response) {

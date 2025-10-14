@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import type { SignOptions, JwtPayload as StdJwtPayload } from "jsonwebtoken";
 
-export type JwtClaims = { sub: string; username: string };
+export type JwtClaims = { id: string; username: string };
 
 const SECRET: string = process.env.JWT_SECRET || "dev-secret";
 

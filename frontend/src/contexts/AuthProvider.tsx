@@ -7,11 +7,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const login = async (username: string, password: string) => {
+    const login = async (username: string, password: string, ghtoken: string) => {
         try {
             const { token, user } = await postJson<{ token: string; user: User }>(
                 "/api/auth/login",
-                { usernameOrEmail: username, password }
+                { usernameOrEmail: username, password, ghtoken}
             );
             localStorage.setItem("jwt", token);
             console.log("user after login:", user);

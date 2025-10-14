@@ -5,7 +5,7 @@ export type AuthContextType = {
     user: User | null;
     loading: boolean;
     isConnected: boolean;
-    login: (username: string, password: string) => Promise<void>;
+    login: (username: string, password: string, ghtoken: string) => Promise<void>;
     logout: () => void;
 };
 

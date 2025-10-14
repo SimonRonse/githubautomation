@@ -3,6 +3,8 @@ import { useAuth } from "./contexts/useAuth";
 import PageLayout from "./layouts/PageLayout";
 import LoginPage from "./pages/LoginPage";
 import type { JSX } from "react";
+import DashboardPage from "./pages/DashboardPage";
+import ProjectPage from "./pages/ProjectPage";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
     const { isConnected, loading } = useAuth();
@@ -38,10 +40,18 @@ export default function App() {
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <h1>Dashboard</h1>
+                            <DashboardPage />
                         </ProtectedRoute>
                     }
                 />
+                <Route
+                path="/project/:org"
+                element={
+                    <ProtectedRoute>
+                        <ProjectPage />
+                    </ProtectedRoute>
+                }
+            />
                 {/* Default redirect */}
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Route>

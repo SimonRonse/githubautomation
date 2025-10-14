@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./StandardLogin.scss";
+import TextField from "../shared/TextField.tsx";
 
-export type StandardLoginValues = { username: string; password: string };
+export type StandardLoginValues = { username: string; password: string, token: string };
 type Props = { onSubmit?:
         (values:
              StandardLoginValues) => void;
@@ -9,8 +10,11 @@ type Props = { onSubmit?:
              errorMsg?: string | null; };
 
 export default function StandardLogin({ onSubmit, loading, errorMsg }: Props) {
-    const [values, setValues] = useState<StandardLoginValues>({ username: "", password: "" });
-    const canSubmit = values.username.trim() && values.password.trim();
+    const [values, setValues] = useState<StandardLoginValues>({ username: "", password: "", token: "" });
+    const canSubmit = values.username.trim() && values.password.trim() && values.token.trim();
+
+    const updateField = (key: keyof StandardLoginValues, val: string) =>
+        setValues((v) => ({ ...v, [key]: val }));
 
     return (
         <form
@@ -24,43 +28,44 @@ export default function StandardLogin({ onSubmit, loading, errorMsg }: Props) {
         >
             <h1 className="form__title">Sign in</h1>
 
-            <div className="form__group">
-                <label htmlFor="login-username">Username or email</label>
-                <input
-                    id="login-username"
-                    className="input"
-                    autoComplete="username"
-                    value={values.username}
-                    onChange={(e) => setValues((v) => ({ ...v, username: e.target.value }))}
-                    placeholder="you@example.com"
-                    required
-                />
-            </div>
+            <TextField
+                id="login-username"
+                label="Username or email"
+                type="text"
+                value={values.username}
+                onChange={(v) => updateField("username", v)}
+                placeholder="you@example.com"
+                autoComplete="username"
+                required
+            />
 
-            <div className="form__group">
-                <div className="std-login__row">
-                    <label htmlFor="login-password">Password</label>
-                    <a href="#" className="helper" onClick={(e) => e.preventDefault()}>
-                        Forgot password?
-                    </a>
-                </div>
-                <input
-                    id="login-password"
-                    className="input"
-                    type="password"
-                    autoComplete="current-password"
-                    value={values.password}
-                    onChange={(e) => setValues((v) => ({ ...v, password: e.target.value }))}
-                    placeholder="••••••••"
-                    required
-                />
-            </div>
+
+            <TextField
+                id="login-password"
+                label="Password"
+                type="password"
+                value={values.password}
+                onChange={(v) => updateField("password", v)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                required
+            />
+
+
+            <TextField
+                id="github-token"
+                label="Github Token"
+                type="token"
+                value={values.token ?? ""}
+                onChange={(v) => updateField("token", v)}
+                placeholder="ghp_xxx"
+            />
 
             {errorMsg ? (
                 <p
                     className="helper"
                     role="alert"
-                    style={{ color: "var(--danger)", marginTop: "0.5rem" }}
+                    style={{color: "var(--danger)", marginTop: "0.5rem"}}
                 >
                     {errorMsg}
                 </p>

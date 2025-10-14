@@ -1,23 +1,32 @@
-import { findByUsername, saveUser } from "../services/user.store.js";
-import { hashPassword } from "../utils/bcrypt.js";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 
-export async function seedTestUser() {
-    const username = "painyce";
-    const email = "teacher@example.com";
-    const password = "(Bt<3do.(ucVwJDf";
+dotenv.config();
+const prisma = new PrismaClient();
 
-    if (findByUsername(username)) {
-        return; // already seeded
+export default async function createUser() {
+    const email = process.env.USER_EMAIL!;
+    const password = process.env.USER_PASSWORD!;
+    const standardName = process.env.USER_NAME!;
+    const githubName = process.env.GITHUB_ALLOWED_USER || null;
+
+    console.log("🔹 Seeding authorized user:", email);
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+        console.log("⚠️ User already exists — skipping creation.");
+    } else {
+        await prisma.user.create({
+            data: {
+                email,
+                passwordHash,
+                standardName,
+                githubName,
+            },
+        });
+        console.log("✅ Authorized user created successfully!");
     }
-
-    const passwordHash = await hashPassword(password);
-    saveUser({
-        id: crypto.randomUUID(),
-        username,
-        email,
-        passwordHash,
-        createdAt: new Date(),
-    });
-
-    console.log("🧪 Seeded test user:", { username, password });
 }
