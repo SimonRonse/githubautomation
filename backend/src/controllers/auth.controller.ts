@@ -6,7 +6,7 @@ import { findById } from "../services/user.store.js";
 export async function register(req: Request, res: Response, next: NextFunction) {
     try {
         const result = await Auth.register(req.body);
-        res.status(201).json(result);
+        return res.status(201).json(result);
     } catch (err: any) {
         if (err?.message === "USERNAME_TAKEN" || err?.message === "EMAIL_TAKEN")
             return res.status(409).json({ error: err.message });

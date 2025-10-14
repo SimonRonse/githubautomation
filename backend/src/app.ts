@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 
-// CORS
+// CORS - Cross Origin Resource Sharing
 app.use(
     cors({
         origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
