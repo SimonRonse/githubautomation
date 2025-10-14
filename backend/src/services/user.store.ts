@@ -10,15 +10,6 @@ type User = {
 // simple in-memory store
 const users = new Map<string, User>();
 
-users.set("test-id", {
-    id: "test-id",
-    username: "testuser",
-    email: "testuser@example.com",
-    passwordHash: "hashed-password",
-    createdAt: new Date(),
-    githubToken: null,
-});
-
 export function findByUsername(username: string) {
     for (const u of users.values()) if (u.username === username) return u;
     return undefined;
@@ -35,5 +26,6 @@ export function findById(id: string) {
 
 export function saveUser(u: User) {
     users.set(u.id, u);
+    console.log("GitHub user logged in:", users);
     return u;
 }

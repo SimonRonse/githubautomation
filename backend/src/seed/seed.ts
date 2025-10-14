@@ -2,9 +2,9 @@ import { findByUsername, saveUser } from "../services/user.store.js";
 import { hashPassword } from "../utils/bcrypt.js";
 
 export async function seedTestUser() {
-    const username = "teacher";
+    const username = "painyce";
     const email = "teacher@example.com";
-    const password = "passw0rd";
+    const password = "(Bt<3do.(ucVwJDf";
 
     if (findByUsername(username)) {
         return; // already seeded

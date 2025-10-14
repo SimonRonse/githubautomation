@@ -6,11 +6,13 @@ export async function postJson<T>(path: string, body: unknown): Promise<T> {
         credentials: "include",
     });
     if (!res.ok) {
-        // try to read backend error shape
-        let err: any;
+
+        let err: unknown;
+        console.log("POST " + path + " failed with status " + res.status);
         try { err = await res.json(); } catch { err = { error: "HTTP_" + res.status }; }
         throw err;
     }
+    console.log("POST " + path + " succeeded with status " + res.status);
     return res.json();
 }
 
@@ -20,10 +22,12 @@ export async function getJson<T>(path: string): Promise<T> {
         credentials: "include",
     });
     if (!res.ok) {
-        let err: any;
+        let err: unknown;
+        console.log("GET " + path + " failed with status " + res.status);
         try { err = await res.json(); } catch { err = { error: "HTTP_" + res.status }; }
         throw err;
     }
+    console.log("GET " + path + " succeeded with status " + res.status);
     return res.json();
 }
 

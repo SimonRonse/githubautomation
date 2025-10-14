@@ -35,9 +35,38 @@ export async function me(req: Request, res: Response) {
     try {
         const payload = verifyJwt(auth);
         const user = findById(payload.sub);
+        console.log("user found in me():", user, "with payload:", payload);
         if (!user) return res.status(401).json({ error: "INVALID_TOKEN" });
-        res.json({ id: user.id, username: user.username, email: user.email });
+        res.json({ "user" :
+            {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            }
+        });
     } catch {
         res.status(401).json({ error: "INVALID_TOKEN" });
+    }
+}
+
+export function githubLogin(_req: Request, res: Response) {
+    try {
+        const redirect = Auth.getGitHubLoginUrl();
+        res.redirect(redirect);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+export async function githubCallback(req: Request, res: Response) {
+    try {
+        const code = req.query.code as string;
+        if (!code) return res.status(400).json({ error: "Missing code" });
+
+        const token = await Auth.handleGitHubCallback(code);
+        res.redirect(`${process.env.FRONTEND_URL}/login?github_token=${token}`);
+    } catch (err: any) {
+        console.error("GitHub auth error:", err);
+        res.status(500).json({ error: err.message || "GitHub authentication failed" });
     }
 }

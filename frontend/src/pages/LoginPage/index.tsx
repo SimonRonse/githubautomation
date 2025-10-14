@@ -2,24 +2,25 @@ import { useState } from "react";
 import "./LoginPage.scss";
 import StandardLogin, { type StandardLoginValues } from "../../components/login/StandardLogin";
 import GithubLogin from "../../components/login/GithubLogin";
-import {useAuth} from "../../contexts/AuthContext.tsx"; // adjust path alias if needed
+import {useAuth} from "../../contexts/useAuth"; // adjust path alias if needed
 
 export default function LoginPage() {
     const { login, loading } = useAuth();
     const [errMsg, setErrMsg] = useState<string | null>(null);
+
     const handleCredentials = async (vals: StandardLoginValues) => {
         setErrMsg(null);
         try {
             await login(vals.username, vals.password);
             // redirect handled by route guard
-        } catch (err: any) {
+        } catch (err: unknown) {
+            if (typeof err === "object" && err && "message" in err && typeof err.message === "string")
             setErrMsg(err.message);
         }
     };
 
     const handleGitHub = () => {
-        // we’ll implement OAuth later; keep UI for now
-        // window.location.href = "/api/github/login";
+        window.location.href = "/api/auth/github/login";
     };
 
     return (
