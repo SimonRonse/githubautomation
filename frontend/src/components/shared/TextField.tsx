@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 type Props = {
     id: string;
@@ -12,6 +12,7 @@ type Props = {
     helper?: string;
     linkLabel?: string;
     onLinkClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+    copyable?: boolean;
 };
 
 export default function TextField({
@@ -26,7 +27,19 @@ export default function TextField({
                                       helper,
                                       linkLabel,
                                       onLinkClick,
+                                      copyable = false,
                                   }: Props) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(value);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        } catch {
+            alert("Failed to copy text.");
+        }
+    };
     return (
         <div className="form__group">
             <div className="text-field__row">
@@ -44,19 +57,38 @@ export default function TextField({
                     </a>
                 )}
             </div>
+            <div className="text-field__input-wrapper">
+                <input
+                    id={id}
+                    className="input"
+                    type={type === "token" ? "text" : type}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder={placeholder}
+                    autoComplete={autoComplete}
+                    required={required}
+                />
 
-            <input
-                id={id}
-                className="input"
-                type={type === "token" ? "text" : type}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={placeholder}
-                autoComplete={autoComplete}
-                required={required}
-            />
+                {copyable && (
+                    <button
+                    type="button"
+                    className="invite-url__copy-btn"
+                    onClick={handleCopy}
+                    aria-label="Copy invite link"
+                    >
+                        ⧉
+                    </button>
+                )}
+            </div>
 
-            {helper && <p className="helper">{helper}</p>}
+            {helper || copied ? (
+                <p
+                    className="helper"
+                    style={{ color: copied ? "var(--focus)" : undefined }}
+                >
+                    {copied ? "Copied!" : helper}
+                </p>
+            ) : null}
         </div>
     );
 }

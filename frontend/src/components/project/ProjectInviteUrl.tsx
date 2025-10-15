@@ -7,18 +7,6 @@ export default function ProjectInviteUrl() {
         return `${window.location.origin}/register/${unique}`;
     });
 
-    const [copied, setCopied] = useState(false);
-
-    const handleCopy = async () => {
-        try {
-            await navigator.clipboard.writeText(inviteUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-        } catch {
-            alert("Failed to copy link.");
-        }
-    };
-
     return (
         <section className="invite-url">
             <h2>Registration Link</h2>
@@ -34,16 +22,9 @@ export default function ProjectInviteUrl() {
                     value={inviteUrl}
                     onChange={() => {}}
                     placeholder="Invite link"
-                    helper={copied ? "Copied!" : undefined}
+                    copyable={true}
+
                 />
-                <button
-                    type="button"
-                    className="invite-url__copy-btn"
-                    onClick={handleCopy}
-                    aria-label="Copy invite link"
-                >
-                    ⧉
-                </button>
             </div>
         </section>
     );
