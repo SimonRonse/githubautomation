@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const prisma = new PrismaClient();
 
-export default async function createUser() {
+async function main() {
     const email = process.env.USER_EMAIL!;
     const password = process.env.USER_PASSWORD!;
     const standardName = process.env.USER_NAME!;
@@ -30,3 +30,12 @@ export default async function createUser() {
         console.log("✅ Authorized user created successfully!");
     }
 }
+
+main()
+    .catch((err) => {
+        console.error("❌ Seed error:", err);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./LoginPage.scss";
 import StandardLogin, { type StandardLoginValues } from "../../components/login/StandardLogin";
 import GithubLogin from "../../components/login/GithubLogin";
-import {useAuth} from "../../contexts/useAuth";
+import {useAuth} from "../../contexts/AuthContext";
 
 export default function LoginPage() {
     const { login, loading } = useAuth();

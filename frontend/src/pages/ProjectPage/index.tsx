@@ -1,35 +1,74 @@
-import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useProject } from "../../contexts/ProjectContext";
+import ProjectHeader from "../../components/project/ProjectHeader";
+import ProjectNumbers from "../../components/project/ProjectNumbers.tsx";
+import GroupNameField from "../../components/project/GroupNameField.tsx";
+import ProjectURLBox from "../../components/project/ProjectURLBox.tsx";
+import OrganizationSelect from "../../components/project/OrganizationSelect.tsx";
 import "./ProjectPage.scss";
-import OrganizationBox from "../../components/project/OrganizationBox";
-import ProjectStats from "../../components/project/ProjectStats";
-import GroupSettings from "../../components/project/GroupSettings";
-import UrlListBox from "../../components/project/ProjectInviteUrl.tsx";
+import { useState, useEffect } from "react";
 
 export default function ProjectPage() {
-    const { org } = useParams<{ org: string }>();
-    const projectName = org === "new" ? "New Project" : org ?? "Unnamed Project";
+    const { project, loading, updateProject } = useProject();
+    const [saved, setSaved] = useState(true);
+    const [showSavedMessage, setShowSavedMessage] = useState(false);
+    const [originalProject, setOriginalProject] = useState(project);
 
-    const [urls, setUrls] = useState<string[]>([
-        "https://github.com/example/repo1",
-        "https://github.com/example/repo2",
-    ]);
+    useEffect(() => {
+        if (!originalProject) setOriginalProject(project);
+        else if (JSON.stringify(project) !== JSON.stringify(originalProject)) setSaved(false);
+        else setSaved(true);
+    }, [project, originalProject]);
+
+    function handleSave() {
+        console.log("Saving project:", project);
+        setOriginalProject(project);
+        setSaved(true);
+        setShowSavedMessage(true);
+
+        setTimeout(() => setShowSavedMessage(false), 2000);
+    }
+
+    function handleRevert() {
+        updateProject(originalProject!);
+        setSaved(true);
+        setShowSavedMessage(false);
+    }
+
+    if (loading || !project) return <p>Loading project...</p>;
 
     return (
-        <main className="project-page">
-            <header className="project-page__header">
-                <h1>{projectName}</h1>
-            </header>
+        <main className="project-page" role="main">
+            <ProjectHeader />
 
-            <OrganizationBox />
+            <div className="project-page__content">
+                <OrganizationSelect />
+                <ProjectNumbers />
+                <GroupNameField />
 
-            <section className="project-page__content">
-                <ProjectStats />
+                <div className="project-page__actions">
+                    <button
+                        className="btn btn--primary"
+                        onClick={handleSave}
+                        disabled={saved}
+                    >
+                        Save
+                    </button>
+                    <button
+                        className="btn btn--secondary"
+                        onClick={handleRevert}
+                        disabled={saved}
+                    >
+                        Revert
+                    </button>
 
-                <GroupSettings />
-
-                <UrlListBox urls={urls} onChange={setUrls} />
-            </section>
+                    <span className="save-status">
+                        {!saved
+                            ? "  Unsaved changes"
+                            : showSavedMessage && "  All changes saved"}
+                    </span>
+                </div>
+                <ProjectURLBox />
+            </div>
         </main>
     );
 }

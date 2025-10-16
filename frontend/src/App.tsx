@@ -1,10 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./contexts/useAuth";
+import { useAuth } from "./contexts/AuthContext";
 import PageLayout from "./layouts/PageLayout";
 import LoginPage from "./pages/LoginPage";
 import type { JSX } from "react";
 import DashboardPage from "./pages/DashboardPage";
 import ProjectPage from "./pages/ProjectPage";
+import {ProjectProvider} from "./contexts/ProjectProvider.tsx";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
     const { isConnected, loading } = useAuth();
@@ -45,10 +46,12 @@ export default function App() {
                     }
                 />
                 <Route
-                path="/project/:org"
+                path="/project/:projectId"
                 element={
                     <ProtectedRoute>
-                        <ProjectPage />
+                        <ProjectProvider>
+                            <ProjectPage />
+                        </ProjectProvider>
                     </ProtectedRoute>
                 }
             />
