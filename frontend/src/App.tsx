@@ -10,14 +10,12 @@ import CreateGroupPage from "./pages/CreateGroupPage";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
     const { isConnected, loading } = useAuth();
-    console.log("ProtectedRoute: isConnected =", isConnected, "loading =", loading);
     if (loading) return <p>Loading...</p>;
     return isConnected ? children : <Navigate to="/login" replace />;
 }
 
 function LoggedInRedirect({ children }: { children: JSX.Element }) {
     const { isConnected, loading } = useAuth();
-    console.log("LoggedInRedirect: isConnected =", isConnected, "loading =", loading);
     if (loading) return <p>Loading...</p>;
     return isConnected ? <Navigate to="/dashboard" replace /> : children;
 }

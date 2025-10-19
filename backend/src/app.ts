@@ -6,7 +6,7 @@ import authRouter from "./routes/auth.routes.js";
 import projectRouter from "./routes/projects.routes.js";
 import groupRouter from "./routes/groups.routes.js";
 import githubRouter from "./routes/github.routes.js";
-import { errorHandler } from "./middlewares/error.middleware.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 dotenv.config();
 
@@ -34,6 +34,6 @@ app.use("/api/github", githubRouter);
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 // Errors
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 export default app;

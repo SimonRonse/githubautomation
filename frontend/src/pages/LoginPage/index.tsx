@@ -21,7 +21,7 @@ export default function LoginPage() {
     };
 
     const handleGitHub = () => {
-        window.location.href = "/api/auth/github/login";
+        window.location.href = "/api/github/login";
     };
 
     return (

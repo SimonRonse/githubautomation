@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TextField from "../../components/shared/TextField";
 import "./CreateGroupPage.scss";
-import { getJson } from "../../api/http";
+import {getJson, postJson} from "../../api/http";
 
 type ProjectInfo = {
     id: number;
@@ -46,12 +46,15 @@ export default function CreateGroupPage() {
         );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const validCount = students.filter((s) => s.name.trim()).length;
         if (!project) return;
         if (validCount < project.minPeople)
-            return alert(`At least ${project.minPeople} students are required.`);
+            return;
+        await postJson(`/group/${projectUrl}`, {
+            students: students.filter(s => s.name && s.github),
+        });
         // TODO: send to backend
         console.log("Submitting group:", students);
         alert("Group submitted successfully!");
