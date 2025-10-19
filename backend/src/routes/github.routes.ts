@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { getUserOrganizations } from "../controllers/github.controller.js";
-import { authMiddleware } from "../middlewares/auth.middleware.js";
+import {getUserOrganizations} from "../repositories/github.repository.js";
+import {authMiddleware} from "../middlewares/auth.middleware.js";
+import {Router} from "express";
 
 const router = Router();
 

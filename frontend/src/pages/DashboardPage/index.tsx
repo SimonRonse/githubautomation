@@ -3,15 +3,15 @@ import "./DashboardPage.scss";
 import { getJson } from "../../api/http";
 import { useNavigate } from "react-router-dom";
 
-type Organization = {
+type ProjectShow = {
     id: number;
-    login: string;
+    name: string;
     avatar_url: string;
     description?: string;
 };
 
 export default function DashboardPage() {
-    const [orgs, setOrgs] = useState<Organization[]>([]);
+    const [projects, setProject] = useState<ProjectShow[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -21,8 +21,8 @@ export default function DashboardPage() {
         (async () => {
             try {
                 setError(null);
-                const res = await getJson<Organization[]>("/api/github/orgs");
-                setOrgs(res);
+                const res = await getJson<ProjectShow[]>("/projects/");
+                setProject(res);
             } catch (err) {
                 console.error("Error loading organizations:", err);
                 setError("Failed to load organizations.");
@@ -32,8 +32,8 @@ export default function DashboardPage() {
         })();
     }, []);
 
-    const handleOrgClick = (org: Organization) => {
-        navigate(`/project/${encodeURIComponent(org.login)}`);
+    const handleProjectClick = (project: ProjectShow) => {
+        navigate(`/project/${encodeURIComponent(project.id)}`);
     };
 
     const handleAddClick = () => {
@@ -52,20 +52,20 @@ export default function DashboardPage() {
                 <p className="dashboard__status">Loading organizations...</p>
             ) : error ? (
                 <p className="dashboard__status dashboard__status--error">{error}</p>
-            ) : orgs.length === 0 ? (
+            ) : projects.length === 0 ? (
                 <p className="dashboard__status">No organizations found.</p>
             ) : (
                 <section className="dashboard__grid">
-                    {orgs.map((org) => (
-                        <div key={org.id}
+                    {projects.map((project) => (
+                        <div key={project.id}
                              className="org-card"
                              role="button"
                              tabIndex={0}
-                             onClick={() => handleOrgClick(org)}>
-                            <img src={org.avatar_url} alt={org.login} className="org-card__avatar"/>
+                             onClick={() => handleProjectClick(project)}>
+                            <img src={project.avatar_url} alt={project.name} className="org-card__avatar"/>
                             <div className="org-card__info">
-                                <h2>{org.login}</h2>
-                                {org.description && <p>{org.description}</p>}
+                                <h2>{project.name}</h2>
+                                {project.description && <p>{project.description}</p>}
                             </div>
                         </div>
                     ))}

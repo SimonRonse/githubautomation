@@ -2,7 +2,7 @@ import { z } from "zod";
 import axios from "axios";
 import { comparePassword, hashPassword } from "../utils/bcrypt.js";
 import { signJwt } from "../utils/jwt.js";
-import {findByEmail, findByGitHubName, findByUsername, saveUser, setGitHubCredential} from "./user.store.js";
+import {findByEmail, findByGitHubName, findByUsername, saveUser, setGitHubCredential} from "../repositories/auth.repository.js";
 
 const RegisterSchema = z.object({
     username: z.string().min(3),

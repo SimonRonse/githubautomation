@@ -8,8 +8,8 @@ export default function ProjectURLBox() {
     if (!project) return null;
 
     const copyToClipboard = async () => {
-        if (!project.url) return;
-        await navigator.clipboard.writeText(project.url);
+        if (!project.key) return;
+        await navigator.clipboard.writeText(project.key);
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
     };
@@ -18,7 +18,7 @@ export default function ProjectURLBox() {
         <div className="project-url">
             <label>Student registration URL</label>
             <div className="project-url__row">
-                <input type="text" value={project.url || ""} readOnly className="input" />
+                <input type="text" value={project.key || ""} readOnly className="input" />
                 <button className="btn btn--ghost" onClick={copyToClipboard}>
                     {copied ? "Copied!" : "Copy"}
                 </button>

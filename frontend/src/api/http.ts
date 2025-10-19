@@ -1,37 +1,55 @@
-export async function postJson<T>(path: string, body: unknown): Promise<T> {
-    const res = await fetch(path, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: tokenHeader() },
-        body: JSON.stringify(body),
-        credentials: "include",
-    });
-    if (!res.ok) {
+import axios, { AxiosError, type AxiosInstance } from "axios";
 
-        let err: unknown;
-        console.log("POST " + path + " failed with status " + res.status);
-        try { err = await res.json(); } catch { err = { error: "HTTP_" + res.status }; }
-        throw err;
+const api: AxiosInstance = axios.create({
+    baseURL: "/api",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// Attach JWT automatically
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("jwt");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+});
+
+// Unified error handling
+api.interceptors.response.use(
+    (response) => response,
+    (error: AxiosError) => {
+        if (error.response?.status === 401) {
+            console.warn("Unauthorized — token may be invalid");
+            localStorage.removeItem("jwt");
+        }
+        throw error;
     }
-    console.log("POST " + path + " succeeded with status " + res.status);
-    return res.json();
+);
+
+// Generic helpers
+export async function getJson<T>(url: string): Promise<T> {
+    const res = await api.get<T>(url);
+    return res.data;
 }
 
-export async function getJson<T>(path: string): Promise<T> {
-    const res = await fetch(path, {
-        headers: { Authorization: tokenHeader() },
-        credentials: "include",
-    });
-    if (!res.ok) {
-        let err: unknown;
-        console.log("GET " + path + " failed with status " + res.status);
-        try { err = await res.json(); } catch { err = { error: "HTTP_" + res.status }; }
-        throw err;
-    }
-    console.log("GET " + path + " succeeded with status " + res.status);
-    return res.json();
+export async function postJson<T>(url: string, body?: unknown): Promise<T> {
+    const res = await api.post<T>(url, body);
+    return res.data;
 }
 
-function tokenHeader() {
-    const t = localStorage.getItem("jwt");
-    return t ? `Bearer ${t}` : "";
+export async function patchJson<T>(url: string, body?: unknown): Promise<T> {
+    const res = await api.patch<T>(url, body);
+    return res.data;
 }
+
+export async function putJson<T>(url: string, body?: unknown): Promise<T> {
+    const res = await api.put<T>(url, body);
+    return res.data;
+}
+
+export async function deleteJson<T>(url: string): Promise<T> {
+    const res = await api.delete<T>(url);
+    return res.data;
+}
+
+export default api;

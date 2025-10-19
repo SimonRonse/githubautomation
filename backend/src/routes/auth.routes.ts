@@ -5,7 +5,7 @@ import {authMiddleware} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.post("/register", register);
+router.post("/register", authMiddleware, register);
 router.post("/login", login);
 router.get("/me",authMiddleware, me);
 router.get("/github/login", githubLogin);

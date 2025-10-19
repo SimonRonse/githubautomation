@@ -1,5 +1,6 @@
 import type {Request, Response} from "express";
-import { findById } from "../services/user.store.js";
+import { findById } from "./auth.repository.js";
+import axios from "axios";
 
 type GitHubOrganization = {
     id: number;
@@ -8,12 +9,10 @@ type GitHubOrganization = {
     description: string | null;
     //Can add more fields if needed
 };
-
+//TODO rewrite with controller and service + Axios
 export async function getUserOrganizations(req: Request, res: Response) {
     try {
-        console.log("getUserOrganizations invoked");
         const userId = (req as any).user?.id; // from auth middleware
-        console.log("getUserOrganizations called by userId:", userId);
         if (!userId) return res.status(401).json({ error: "UNAUTHORIZED" });
 
         const user = await findById(userId);
@@ -36,7 +35,6 @@ export async function getUserOrganizations(req: Request, res: Response) {
         }
 
         const orgs = await ghResponse.json() as GitHubOrganization[];
-        console.log("Fetched organizations:", orgs);
         // Minimal projection to reduce payload
         const filtered: GitHubOrganization[] = orgs.map((org: any) => ({
             id: org.id,
@@ -49,5 +47,26 @@ export async function getUserOrganizations(req: Request, res: Response) {
     } catch (err) {
         console.error("getUserOrganizations error:", err);
         res.status(500).json({ error: "INTERNAL_ERROR" });
+    }
+}
+
+export async function getOrganizationDetails(orgName: string, token: string) {
+    try {
+        const res = await axios.get(`https://api.github.com/orgs/${orgName}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/vnd.github.v3+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+                "User-Agent": "painautomationgithub-App",
+            },
+        });
+        return {
+            login: res.data.login,
+            avatar_url: res.data.avatar_url,
+            description: res.data.description,
+        };
+    } catch (err: any) {
+        console.error(`Failed to fetch org details for ${orgName}:`, err.response?.status, err.response?.data);
+        return null;
     }
 }

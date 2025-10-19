@@ -9,8 +9,8 @@ export default function GroupNameField() {
         <TextField
             id="group-name"
             label="Group name"
-            value={project.groupName}
-            onChange={(v) => updateProject({ groupName: v })}
+            value={project.groupNamePattern}
+            onChange={(v) => updateProject({ groupNamePattern: v })}
             placeholder="Ex: DEV##Group"
             helper='Type "##" in the group name to include the project ID.'
         />

@@ -10,7 +10,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = async (username: string, password: string, ghtoken: string) => {
         try {
             const { token, user } = await postJson<{ token: string; user: User }>(
-                "/api/auth/login",
+                "/auth/login",
                 { usernameOrEmail: username, password, ghtoken}
             );
             localStorage.setItem("jwt", token);
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (ghToken) {
             localStorage.setItem("jwt", ghToken);
             window.history.replaceState({}, document.title, window.location.pathname);
-            getJson<{ user: User }>("/api/auth/me")
+            getJson<{ user: User }>("/auth/me")
                 .then((res) => setUser(res.user))
                 .catch(() => {
                     localStorage.removeItem("jwt");
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const token = localStorage.getItem("jwt");
             if (!token) return setLoading(false);
 
-            getJson<{ user: User }>("/api/auth/me")
+            getJson<{ user: User }>("/auth/me")
                 .then((res) => setUser(res.user))
                 .catch(() => {
                     localStorage.removeItem("jwt");

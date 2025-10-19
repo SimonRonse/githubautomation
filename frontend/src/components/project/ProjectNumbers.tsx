@@ -11,8 +11,8 @@ export default function ProjectNumbers() {
                 <input
                     type="number"
                     min={0}
-                    value={project.minPersons}
-                    onChange={(e) => updateProject({ minPersons: Number(e.target.value) })}
+                    value={project.minPeople}
+                    onChange={(e) => updateProject({ minPeople: Number(e.target.value) })}
                 />
             </div>
 
@@ -21,8 +21,8 @@ export default function ProjectNumbers() {
                 <input
                     type="number"
                     min={0}
-                    value={project.maxPersons}
-                    onChange={(e) => updateProject({ maxPersons: Number(e.target.value) })}
+                    value={project.maxPeople}
+                    onChange={(e) => updateProject({ maxPeople: Number(e.target.value) })}
                 />
             </div>
 
@@ -31,8 +31,8 @@ export default function ProjectNumbers() {
                 <input
                     type="number"
                     min={0}
-                    value={project.totalPersons}
-                    onChange={(e) => updateProject({ totalPersons: Number(e.target.value) })}
+                    value={project.totalPeople}
+                    onChange={(e) => updateProject({ totalPeople: Number(e.target.value) })}
                 />
             </div>
         </div>

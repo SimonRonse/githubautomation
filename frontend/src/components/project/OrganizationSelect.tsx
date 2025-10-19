@@ -12,7 +12,7 @@ export default function OrganizationSelect() {
     useEffect(() => {
         (async () => {
             try {
-                const res = await getJson<Organization[]>("/api/github/orgs");
+                const res = await getJson<Organization[]>("/github/orgs");
                 setOrgs(res);
             } catch (err) {
                 console.error("Failed to load organizations:", err);

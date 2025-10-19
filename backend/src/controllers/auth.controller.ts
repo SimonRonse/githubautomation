@@ -1,7 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import * as Auth from "../services/auth.service.js";
-import { verifyJwt } from "../utils/jwt.js";
-import { findById } from "../services/user.store.js";
 
 export async function register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -33,7 +31,7 @@ export async function me(req: Request, res: Response) {
     const user = (req as any).user;
     if (!user) return res.status(401).json({ error: "NOT_AUTHENTICATED" });
 
-    res.json({
+    return res.json({
         user: {
             id: user.id,
             username: user.standardName ?? user.username,
@@ -45,9 +43,9 @@ export async function me(req: Request, res: Response) {
 export function githubLogin(_req: Request, res: Response) {
     try {
         const redirect = Auth.getGitHubLoginUrl();
-        res.redirect(redirect);
+        return res.redirect(redirect);
     } catch (err: any) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 }
 
@@ -57,9 +55,9 @@ export async function githubCallback(req: Request, res: Response) {
         if (!code) return res.status(400).json({ error: "Missing code" });
 
         const token = await Auth.handleGitHubCallback(code);
-        res.redirect(`${process.env.FRONTEND_URL}/login?github_token=${token}`);
+        return res.redirect(`${process.env.FRONTEND_URL}/login?github_token=${token}`);
     } catch (err: any) {
         console.error("GitHub auth error:", err);
-        res.status(500).json({ error: err.message || "GitHub authentication failed" });
+        return res.status(500).json({ error: err.message || "GitHub authentication failed" });
     }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { ProjectContext, type Project } from "./ProjectContext";
-import { getJson } from "../api/http";
+import {getJson, patchJson, postJson} from "../api/http";
 import {useParams} from "react-router-dom";
 
 type Props = { children: ReactNode };
@@ -19,6 +19,7 @@ const emptyProject: Project = {
 export function ProjectProvider({ children }: Props) {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const { projectId } = useParams<{ projectId: string }>();
 
     const refreshProject = async () => {
@@ -30,7 +31,8 @@ export function ProjectProvider({ children }: Props) {
         }
         try {
             setLoading(true);
-            const data = await getJson<Project>(`/api/projects/${projectId}`);
+            const data = await getJson<Project>(`/projects/${projectId}`);
+            console.log(data);
             setProject(data);
         } catch (err) {
             console.error("Failed to load project:", err);
@@ -45,6 +47,28 @@ export function ProjectProvider({ children }: Props) {
         setProject((prev) => (prev ? { ...prev, ...updates } : prev));
     };
 
+    const saveProject = async () => {
+        if (!project) return;
+        setSaving(true);
+
+        try {
+            let saved: Project;
+
+            if (project.id === "new" || !project.id) {
+                saved = await postJson<Project>("/projects", project);
+            } else {
+                saved = await patchJson<Project>(`/projects/${project.id}`, project);
+            }
+
+            setProject(saved);
+            console.log("✅ Project saved:", saved);
+        } catch (err) {
+            console.error("❌ Failed to save project:", err);
+        } finally {
+            setSaving(false);
+        }
+    };
+
     useEffect(() => {
         void refreshProject();
     }, [projectId]);
@@ -56,6 +80,8 @@ export function ProjectProvider({ children }: Props) {
                 loading,
                 updateProject,
                 refreshProject,
+                saveProject,
+                saving,
             }}
         >
             {children}

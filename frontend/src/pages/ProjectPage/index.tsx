@@ -8,7 +8,7 @@ import "./ProjectPage.scss";
 import { useState, useEffect } from "react";
 
 export default function ProjectPage() {
-    const { project, loading, updateProject } = useProject();
+    const { project, loading,updateProject, saveProject, saving } = useProject();
     const [saved, setSaved] = useState(true);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
     const [originalProject, setOriginalProject] = useState(project);
@@ -20,7 +20,7 @@ export default function ProjectPage() {
     }, [project, originalProject]);
 
     function handleSave() {
-        console.log("Saving project:", project);
+        saveProject();
         setOriginalProject(project);
         setSaved(true);
         setShowSavedMessage(true);
@@ -64,7 +64,7 @@ export default function ProjectPage() {
                     <span className="save-status">
                         {!saved
                             ? "  Unsaved changes"
-                            : showSavedMessage && "  All changes saved"}
+                            : saving? "Saving..." : showSavedMessage && "  All changes saved"}
                     </span>
                 </div>
                 <ProjectURLBox />
