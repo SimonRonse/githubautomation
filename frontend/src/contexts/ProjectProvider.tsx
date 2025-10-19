@@ -9,11 +9,11 @@ const emptyProject: Project = {
     id: "new",
     name: "",
     organization: "",
-    minPersons: 1,
-    maxPersons: 3,
-    totalPersons: 0,
-    groupName: "",
-    url: "",
+    minPeople: 1,
+    maxPeople: 3,
+    totalPeople: 0,
+    groupNamePattern: "",
+    key: "",
 };
 
 export function ProjectProvider({ children }: Props) {

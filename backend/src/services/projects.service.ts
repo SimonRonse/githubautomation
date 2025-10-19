@@ -13,6 +13,12 @@ export const projectService = {
         return project;
     },
 
+    async getByKey(key: string) {
+        const project = await projectRepository.findByKey(key);
+        if (!project) throw new BadRequestError("INVALID_PROJECT_KEY");
+        return project;
+    },
+
     async listForDashboard(userId: string) {
         const user = await findById(userId);
 

@@ -8,6 +8,7 @@ export default function OrganizationSelect() {
     const { project, updateProject } = useProject();
     const [orgs, setOrgs] = useState<Organization[]>([]);
     const [loading, setLoading] = useState(true);
+    const [newOrg, newOrgClick] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -21,6 +22,14 @@ export default function OrganizationSelect() {
             }
         })();
     }, []);
+
+    function NewProjectClick() {
+        newOrgClick(true);
+        window.open(
+            "https://github.com/account/organizations/new",
+            "_blank"
+        )
+    }
 
     if (!project) return null;
 
@@ -47,16 +56,28 @@ export default function OrganizationSelect() {
 
                 <button
                     className="btn btn--small"
-                    onClick={() =>
-                        window.open(
-                            "https://github.com/account/organizations/new",
-                            "_blank"
-                        )
-                    }
+                    onClick={NewProjectClick}
                 >
                     Create
                 </button>
             </div>
+            {newOrg && (
+                <div>
+                    <small>
+                        Don't forget to register the organization :
+                    </small>
+                    <br />
+                    <small>
+                        <a
+                        href={`https://github.com/apps/painautomationgithub/installations/new?state=${encodeURIComponent(window.location.href)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Register organization on GitHub
+                    </a>
+                    </small>
+                </div>
+            )}
         </div>
     );
 }

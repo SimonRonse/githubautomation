@@ -51,6 +51,11 @@ export function githubLogin(_req: Request, res: Response) {
 
 export async function githubCallback(req: Request, res: Response) {
     try {
+        console.log("GitHub callback received with query:", req.query);
+        if (req.query.installation_id) {
+            console.error("GitHub callback error: Missing code");
+            return res.status(400).json({ error: "Missing code" });
+        }
         const code = req.query.code as string;
         if (!code) return res.status(400).json({ error: "Missing code" });
 

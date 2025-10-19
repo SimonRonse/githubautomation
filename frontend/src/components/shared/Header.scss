@@ -4,6 +4,11 @@
   z-index: 10;
   background: var(--bg-elev);
   border-bottom: 1px solid var(--border);
+
+  .app-header__title {
+    text-decoration: none;
+    color: inherit;
+  }
 }
 
 .app-header__inner {

@@ -8,6 +8,10 @@ export const projectRepository = {
         return project;
     },
 
+    async findByKey(key: string) {
+        return prisma.project.findUnique({ where: { key } });
+    },
+
     async findByProf(profId: string) {
         return prisma.project.findMany({
             where: { profId },

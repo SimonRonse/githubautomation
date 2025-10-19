@@ -6,6 +6,7 @@ import type { JSX } from "react";
 import DashboardPage from "./pages/DashboardPage";
 import ProjectPage from "./pages/ProjectPage";
 import {ProjectProvider} from "./contexts/ProjectProvider.tsx";
+import CreateGroupPage from "./pages/CreateGroupPage";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
     const { isConnected, loading } = useAuth();
@@ -54,7 +55,9 @@ export default function App() {
                         </ProjectProvider>
                     </ProtectedRoute>
                 }
-            />
+                />
+                <Route path="/createGroup/:projectUrl" element={<CreateGroupPage />} />
+
                 {/* Default redirect */}
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Route>

@@ -4,6 +4,7 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth.routes.js";
 import projectRouter from "./routes/projects.routes.js";
+import groupRouter from "./routes/groups.routes.js";
 import githubRouter from "./routes/github.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -26,6 +27,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/projects", projectRouter);
+app.use("/api/group", groupRouter);
 app.use("/api/github", githubRouter);
 
 // Health
