@@ -12,6 +12,9 @@ export default function ProjectHeader() {
         if (editable) {
             updateProject({ name: localName });
         }
+        else {
+            setLocalName(project.name || "");
+        }
         setEditable(!editable);
     };
 
@@ -33,19 +36,8 @@ export default function ProjectHeader() {
                 className="btn btn--ghost btn--small"
                 onClick={handleEditClick}
             >
-                {editable ? "Save name" : "Edit"}
+                {editable ? "Close" : "Edit"}
             </button>
-            {editable && (
-                <button
-                    className="btn btn--ghost btn--small"
-                    onClick={() => {
-                        setEditable(false);
-                        setLocalName(project.name || "");
-                    }}
-                >
-                    Cancel
-                </button>
-            )}
         </div>
     );
 }

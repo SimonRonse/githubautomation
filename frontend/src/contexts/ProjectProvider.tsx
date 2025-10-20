@@ -20,6 +20,7 @@ export function ProjectProvider({ children }: Props) {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | undefined>(undefined);
     const { projectId } = useParams<{ projectId: string }>();
 
     const refreshProject = async () => {
@@ -60,9 +61,11 @@ export function ProjectProvider({ children }: Props) {
                 saved = await patchJson<Project>(`/projects/${project.id}`, project);
             }
 
+            setError(undefined);
             setProject(saved);
             console.log("✅ Project saved:", saved);
-        } catch (err) {
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Failed to save project");
             console.error("❌ Failed to save project:", err);
         } finally {
             setSaving(false);
@@ -78,10 +81,11 @@ export function ProjectProvider({ children }: Props) {
             value={{
                 project,
                 loading,
+                saving,
+                error,
                 updateProject,
                 refreshProject,
                 saveProject,
-                saving,
             }}
         >
             {children}

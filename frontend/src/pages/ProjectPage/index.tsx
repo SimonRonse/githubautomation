@@ -8,7 +8,7 @@ import "./ProjectPage.scss";
 import { useState, useEffect } from "react";
 
 export default function ProjectPage() {
-    const { project, loading,updateProject, saveProject, saving } = useProject();
+    const { project, loading,updateProject, saveProject, saving, error } = useProject();
     const [saved, setSaved] = useState(true);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
     const [originalProject, setOriginalProject] = useState(project);
@@ -60,14 +60,17 @@ export default function ProjectPage() {
                     >
                         Revert
                     </button>
-
-                    <span className="save-status">
+                    <span className={!saved ? "save-status" : error ? "error-status" : "save-status"}>
                         {!saved
-                            ? "  Unsaved changes"
-                            : saving? "Saving..." : showSavedMessage && "  All changes saved"}
+                            ? "Unsaved changes"
+                            : saving
+                                ? "Saving..."
+                                : error
+                                    ? error
+                                    : showSavedMessage && "All changes saved"}
                     </span>
                 </div>
-                <ProjectURLBox />
+                <ProjectURLBox/>
             </div>
         </main>
     );

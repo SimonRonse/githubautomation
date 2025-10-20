@@ -1,11 +1,8 @@
 import {prisma} from "../db/prisma.js";
-import {NotFoundError} from "../utils/errors.js";
 
 export const projectRepository = {
     async findById(id: string) {
-        const project = await prisma.project.findUnique({ where: { id } });
-        if (!project) throw new NotFoundError("Project not found");
-        return project;
+        return prisma.project.findUnique({ where: { id } });
     },
 
     async findByKey(key: string) {

@@ -15,6 +15,7 @@ export type ProjectContextType = {
     project: Project | null;
     loading: boolean;
     saving?: boolean;
+    error?: string;
     updateProject: (updates: Partial<Project>) => void;
     refreshProject: () => Promise<void>;
     saveProject: () => Promise<void>;

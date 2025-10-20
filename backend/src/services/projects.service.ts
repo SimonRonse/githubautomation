@@ -1,36 +1,35 @@
 import crypto from "node:crypto";
 import {projectRepository} from "../repositories/projects.repository.js";
-import {BadRequestError, ForbiddenError} from "../utils/errors.js";
-import {getOrganizationDetails} from "../repositories/github.repository.js";
+import {getGitHubOrgDetails} from "./github.service.js";
 import {findById} from "../repositories/auth.repository.js";
+import {AuthError, ProjectError} from "../utils/errors.js";
 
 
 
 export const projectService = {
     async getById(id: string, profId: string) {
         const project = await projectRepository.findById(id);
-        if (project.profId !== profId) throw new ForbiddenError();
+        if (!project) throw ProjectError.Missing(id);
+        if (project.profId !== profId) throw ProjectError.UnauthorizedAccess(id);
         return project;
     },
 
     async getByKey(key: string) {
-        const project = await projectRepository.findByKey(key);
-        if (!project) throw new BadRequestError("INVALID_PROJECT_KEY");
-        return project;
+        return projectRepository.findByKey(key);
     },
 
     async listForDashboard(userId: string) {
         const user = await findById(userId);
 
         if (!user || !user.githubToken)
-            throw new BadRequestError("NO_GITHUB_TOKEN");
+            throw AuthError.UserNotFound(userId);
 
         const projects = await projectRepository.findByProf(userId);
 
         // Prepare GitHub data for each org
         return await Promise.all(
             projects.map(async (p) => {
-                const orgInfo = await getOrganizationDetails(p.organization, user.githubToken!);
+                const orgInfo = await getGitHubOrgDetails(p.organization, user.githubToken!);
                 return {
                     id: p.id,
                     name: p.name,
@@ -51,20 +50,14 @@ export const projectService = {
         groupNamePattern?: string;
         profId: string;
     }) {
-        console.log(input);
-        if (!input.name || !input.organization)
-            throw new BadRequestError("Missing project name or organization");
-
-        if (input.minPeople && input.maxPeople && input.minPeople > input.maxPeople)
-            throw new BadRequestError("Min people cannot exceed max people");
-
+        checkProject(input);
         return projectRepository.create({
-            organization: input.organization,
-            name: input.name,
-            minPeople: input.minPeople ?? 1,
-            maxPeople: input.maxPeople ?? 3,
-            totalPeople: input.totalPeople ?? 20,
-            groupNamePattern: input.groupNamePattern ?? "",
+            organization: input.organization!,
+            name: input.name!,
+            minPeople: input.minPeople!,
+            maxPeople: input.maxPeople!,
+            totalPeople: input.totalPeople!,
+            groupNamePattern: input.groupNamePattern!,
             profId: input.profId,
             key: crypto.randomUUID(),
         });
@@ -78,11 +71,41 @@ export const projectService = {
         groupNamePattern: string;
     }>) {
         const project = await projectRepository.findById(id);
-        if (project.profId !== profId) throw new ForbiddenError();
+        if (!project) throw ProjectError.Missing(id);
+        if (project.profId !== profId) throw ProjectError.UnauthorizedAccess(id);
 
-        if (updates.minPeople && updates.maxPeople && updates.minPeople > updates.maxPeople)
-            throw new BadRequestError("Min people cannot exceed max people");
+        checkProject({ ...project, ...updates, profId });
 
         return projectRepository.update(id, updates);
     },
 };
+function checkProject(project: {
+    organization?: string;
+    name?: string;
+    minPeople?: number;
+    maxPeople?: number;
+    totalPeople?: number;
+    groupNamePattern?: string;
+    profId: string;
+}){
+    //Check organization name min max pattern and throw ProjectError.Invalid(missing field)
+
+    if (!project.organization){
+        throw ProjectError.Invalid("organization");
+    }
+    if (!project.name){
+        throw ProjectError.Invalid("name");
+    }
+    if (!project.minPeople || project.minPeople < 1){
+        throw ProjectError.Invalid("minPeople");
+    }
+    if (!project.maxPeople || project.maxPeople < project.minPeople){
+        throw ProjectError.Invalid("maxPeople");
+    }
+    if (project.totalPeople === undefined || project.totalPeople < project.maxPeople){
+        throw ProjectError.Invalid("totalPeople");
+    }
+    if (!project.groupNamePattern){
+        throw ProjectError.Invalid("groupNamePattern");
+    }
+}

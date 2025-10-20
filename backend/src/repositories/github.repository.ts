@@ -1,72 +1,101 @@
-import type {Request, Response} from "express";
-import { findById } from "./auth.repository.js";
 import axios from "axios";
+import {GithubError} from "../utils/errors.js";
 
-type GitHubOrganization = {
-    id: number;
-    login: string;
-    avatar_url: string;
-    description: string | null;
-    //Can add more fields if needed
-};
-//TODO rewrite with controller and service + Axios
-export async function getUserOrganizations(req: Request, res: Response) {
-    try {
-        const userId = (req as any).user?.id; // from auth middleware
-        if (!userId) return res.status(401).json({ error: "UNAUTHORIZED" });
-
-        const user = await findById(userId);
-        if (!user || !user.githubToken)
-            return res.status(400).json({ error: "NO_GITHUB_TOKEN" });
-
-        const ghResponse = await fetch("https://api.github.com/user/orgs", {
-            headers: {
-                Authorization: `Bearer ${user.githubToken}`,
-                Accept: "application/vnd.github.v3+json",
-                "X-GitHub-Api-Version": "2022-11-28",
-                "User-Agent": "painautomationgithub-App",
-            },
-        });
-
-        if (!ghResponse.ok) {
-            const errText = await ghResponse.text();
-            console.error("GitHub API error:", errText);
-            return res.status(ghResponse.status).json({ error: "GITHUB_API_ERROR" });
-        }
-
-        const orgs = await ghResponse.json() as GitHubOrganization[];
-        // Minimal projection to reduce payload
-        const filtered: GitHubOrganization[] = orgs.map((org: any) => ({
-            id: org.id,
-            login: org.login,
-            avatar_url: org.avatar_url,
-            description: org.description,
-        }));
-
-        res.json(filtered);
-    } catch (err) {
-        console.error("getUserOrganizations error:", err);
-        res.status(500).json({ error: "INTERNAL_ERROR" });
-    }
+export async function getGitHubUserProfile(access_token: string) {
+    return axios.get("https://api.github.com/user", {
+        headers: { Authorization: `Bearer ${access_token}` },
+    }).catch(err => {
+        console.error("GitHub user profile error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError("GitHub user profile fetch failed");
+    });
 }
 
-export async function getOrganizationDetails(orgName: string, token: string) {
-    try {
-        const res = await axios.get(`https://api.github.com/orgs/${orgName}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/vnd.github.v3+json",
-                "X-GitHub-Api-Version": "2022-11-28",
-                "User-Agent": "painautomationgithub-App",
-            },
-        });
-        return {
-            login: res.data.login,
-            avatar_url: res.data.avatar_url,
-            description: res.data.description,
-        };
-    } catch (err: any) {
-        console.error(`Failed to fetch org details for ${orgName}:`, err.response?.status, err.response?.data);
-        return null;
-    }
+export async function getUserGitHubToken(code: string) {
+    return axios.post(
+        "https://github.com/login/oauth/access_token",
+        {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code,
+        },
+        { headers: { Accept: "application/json" } }
+    ).catch(err => {
+        console.error("GitHub token exchange error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError("GitHub access token exchange failed");
+    })
+}
+
+export async function getOrganizations(access_token: string) {
+    return axios.get("https://api.github.com/user/orgs", {
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+            Accept: "application/vnd.github.v3+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "painautomationgithub-App",
+        },
+    }).catch(err => {
+        console.error("GitHub API error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError("GitHub API error while fetching organizations");
+    });
+}
+
+export async function getOrganization(orgName: string, token: string) {
+    return axios.get(`https://api.github.com/orgs/${orgName}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github.v3+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "painautomationgithub-App",
+        },
+    }).catch(err => {
+        console.error("GitHub organization fetch error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError(`GitHub API error while fetching organization ${orgName}`);
+    });
+}
+
+export async function createGithubRepo(token: string, org: string, name: string, options: any) {
+    return axios.post(`https://api.github.com/orgs/${org}/repos`, {
+        name,
+        ...options
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "painautomationgithub-App"
+        },
+    }).catch(err => {
+        console.error("GitHub repository creation error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError(`GitHub API error while creating repository ${name} in organization ${org}`);
+    });
+}
+
+export async function addCollaborator(token: string, org: string, repo: string, username: string) {
+    return axios.put(`https://api.github.com/repos/${org}/${repo}/collaborators/${username}`, {}, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "painautomationgithub-App"
+        },
+    }).catch(err => {
+        console.error("GitHub add collaborator error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError(`GitHub API error while adding collaborator ${username} to repository ${repo} in organization ${org}`);
+    });
+}
+export async function githubUserExists(token: string, username: string): Promise<boolean> {
+    return axios.get(`https://api.github.com/users/${username}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "painautomationgithub-App"
+        },
+    }).then(() => true).catch(err => {
+        if (err.response && err.response.status === 404) {
+            return false;
+        }
+        console.error("GitHub user existence check error:", err.response?.status, err.response?.data);
+        throw GithubError.ApiError(`GitHub API error while checking existence of user ${username}`);
+    });
 }

@@ -47,7 +47,7 @@ export async function saveUser(data: {
     passwordHash: string;
     githubToken?: string | null;
 }): Promise<User> {
-    const user = await prisma.user.create({
+    return prisma.user.create({
         data: {
             id: uuid(),
             email: data.email,
@@ -57,18 +57,14 @@ export async function saveUser(data: {
             githubToken: data.githubToken ?? null,
         },
     });
-    console.log("✅ User created:", user.email);
-    return user;
 }
 
 /**
  * Update a user's GitHub token
  */
 export async function setGitHubCredential(id: string, token: string, githubName?:string): Promise<void> {
-    console.log("🔹 Setting GitHub token for user:", id);
     await prisma.user.update({
         where: { id },
         data: { githubToken: token },
     });
-    console.log("🔹 Updated GitHub token for user:", id);
 }
