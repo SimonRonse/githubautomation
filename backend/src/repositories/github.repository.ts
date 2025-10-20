@@ -65,7 +65,7 @@ export async function createGithubRepo(token: string, org: string, name: string,
             "User-Agent": "painautomationgithub-App"
         },
     }).catch(err => {
-        console.error("GitHub repository creation error:", err.response?.status, err.response?.data);
+        console.error("GitHub repository creation error: Does your organization exists and is in the github app?");
         throw GithubError.ApiError(`Internal Error calling github: Ask your teacher`);
     });
 }
