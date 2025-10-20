@@ -29,7 +29,15 @@ export const projectService = {
         // Prepare GitHub data for each org
         return await Promise.all(
             projects.map(async (p) => {
-                const orgInfo = await getGitHubOrgDetails(p.organization, user.githubToken!);
+                const orgInfo = await getGitHubOrgDetails(p.organization, user.githubToken!)
+                    .catch((err) => {
+                        return {
+                            id: p.id,
+                            name: p.name,
+                            avatar_url: "",
+                            description: "[ERROR] Organisation isn't reachable (did you remove the app or deleted it?)",
+                        }
+                    });
                 return {
                     id: p.id,
                     name: p.name,

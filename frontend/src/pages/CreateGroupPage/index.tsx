@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import TextField from "../../components/shared/TextField";
 import "./CreateGroupPage.scss";
 import {getJson, postJson} from "../../api/http";
@@ -22,6 +22,7 @@ export default function CreateGroupPage() {
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [badResponse, setBadResponse] = useState<string | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -46,18 +47,27 @@ export default function CreateGroupPage() {
         );
     };
 
+    type DataResponse = { repo: string };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const validCount = students.filter((s) => s.name.trim()).length;
-        if (!project) return;
-        if (validCount < project.minPeople)
+        if (!project) {
+            setBadResponse("Project Not Found");
             return;
+        }
+        setLoading(true);
         await postJson(`/group/${projectUrl}`, {
             students: students.filter(s => s.name && s.github),
+            })
+            .then((data) => {
+                window.location.href = (data as DataResponse).repo;            })
+            .catch((err) => {
+                console.log(err.response);
+                setBadResponse(err.response?.data?.message);
+            })
+            .finally(() => {
+                setLoading(false);
         });
-        // TODO: send to backend
-        console.log("Submitting group:", students);
-        alert("Group submitted successfully!");
     };
 
     if (loading) return <p>Loading project...</p>;
@@ -70,6 +80,11 @@ export default function CreateGroupPage() {
             <p className="helper">
                 Minimum {project.minPeople} students, maximum {project.maxPeople}
             </p>
+            {badResponse &&
+                <p className="bad-status">
+                    {badResponse}
+                </p>
+            }
 
             <form onSubmit={handleSubmit} className="join-group-form">
                 {students.map((s, i) => (

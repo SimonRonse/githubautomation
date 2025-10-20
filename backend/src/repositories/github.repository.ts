@@ -66,7 +66,7 @@ export async function createGithubRepo(token: string, org: string, name: string,
         },
     }).catch(err => {
         console.error("GitHub repository creation error:", err.response?.status, err.response?.data);
-        throw GithubError.ApiError(`GitHub API error while creating repository ${name} in organization ${org}`);
+        throw GithubError.ApiError(`Internal Error calling github: Ask your teacher`);
     });
 }
 
